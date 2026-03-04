@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detection</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #e8f5e8;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #228B22;
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 50px;
+        }
+
+        .upload-box {
+            width: 300px;
+            height: 200px;
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .upload-box:hover {
+            background-color: #f0f8f0;
+        }
+
+        .leaf-icon {
+            font-size: 4em;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .upload-box.uploaded .image-preview {
+            display: block;
+        }
+
+        .upload-box.uploaded .leaf-icon,
+        .upload-box.uploaded .upload-text {
+            display: none;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result img {
+            max-width: 300px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Plant Disease Detection</h1>
+    </header>
+
+    <div class="upload-container">
+        <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data">
+            <label for="fileInput" class="upload-box">
+                <div class="leaf-icon">🌿</div>
+                <p class="upload-text">Click to upload leaf image</p>
+                <img class="image-preview" id="imagePreview" alt="Uploaded Image">
+            </label>
+            <input type="file" id="fileInput" name="image" accept="image/*" required>
+            <button type="submit" class="submit-button">Submit</button>
+        </form>
+    </div>
+
+    {% if prediction %}
+        <div class="result">
+            <h2>Prediction: {{ prediction }}</h2>
+            {% if image_url %}
+                <img src="{{ image_url }}" alt="Uploaded Image">
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const uploadBox = document.querySelector('.upload-box');
+            const imagePreview = document.getElementById('imagePreview');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                uploadBox.classList.add('uploaded');
+            }
+        });
+    </script>
+</body>
+</html>
